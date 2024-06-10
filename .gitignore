@@ -1,0 +1,7 @@
+lib/ 
+Bin/
+obj/
+.vs/
+.md
+.idea/
+.user
