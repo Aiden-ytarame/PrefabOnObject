@@ -1,10 +1,8 @@
 using System;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
-using Il2CppSystem.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
-using VGEditor;
 using Object = UnityEngine.Object;
 
 namespace PrefabOnAbsolutePos;
