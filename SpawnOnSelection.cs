@@ -49,7 +49,7 @@ public class ObjectManager_Patch
         }
         else
         {
-            Plugin.Inst.Log.LogError("Selected Object Invalid [did you remember to expand the prefab?]");
+            EditorManager.inst.DisplayNotification("Selected Object Invalid\n[remember to expand a prefab if you're selecting it]", 5, EditorManager.NotificationType.Error);
         }
         
         QuickSpawn = false;
@@ -68,7 +68,6 @@ public class PrefabQuickSpawner_Patch
         if (ObjectManager_Patch.ShouldSpawnOnSelec)
         {
             ObjectManager_Patch.QuickSpawn = true;
-            Plugin.Inst.Log.LogWarning("QUICK SPAWN");
         }
     }
 
@@ -122,31 +121,5 @@ public class QS_Editor_Patch
         activeObj.SetSiblingIndex(3);
         
         
-    }
-}
-
-
-[HarmonyPatch(typeof(ObjectManager))]
-public class QS_Editor_Patch2
-{
-    [HarmonyPatch(nameof(ObjectManager.UpdatePrefabInstance))]
-    [HarmonyPrefix]
-    static void PostSetup(string _instID)
-    {
-        var prefabObj = DataManager.inst.gameData.prefabObjects.Find(DelegateSupport.ConvertDelegate<Il2CppSystem.Predicate<DataManager.GameData.PrefabObject>>(
-            new Predicate<DataManager.GameData.PrefabObject>(x => x.ID == _instID)));
-        
-        var prefab = DataManager.inst.gameData.prefabs.Find(DelegateSupport.ConvertDelegate<Il2CppSystem.Predicate<DataManager.GameData.Prefab>>(
-            new Predicate<DataManager.GameData.Prefab>(x => x.ID == prefabObj.prefabID)));
-        
-        var enu = ObjectEditor.Inst.SelectedObjects.System_Collections_IEnumerable_GetEnumerator();
-        List<DataManager.GameData.BeatmapObject> newObjects = new();
-        while (enu.MoveNext())
-        {
-            newObjects.Add(((ObjectSelection)enu.Current).GetObjectData());
-        }
-
-        prefab.InitObjects(newObjects);
-        Plugin.Inst.Log.LogWarning("Prefab Updated");
     }
 }
