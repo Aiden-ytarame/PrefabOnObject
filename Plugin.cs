@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
+using Il2CppInterop.Runtime.Injection;
 
 namespace PrefabOnAbsolutePos;
 

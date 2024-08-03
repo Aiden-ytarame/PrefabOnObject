@@ -1,16 +1,19 @@
 using System;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
+using Il2CppSystem.Threading.Tasks;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
+using VGFunctions;
 using Object = UnityEngine.Object;
 
 namespace PrefabOnAbsolutePos;
 
 [HarmonyPatch(typeof(ObjectManager))]
-public class ObjectManager_Patch
+public class ObjectManagerPatch
 {
-    public static bool QuickSpawn;
+    public static bool QuickSpawn = false;
     public static bool ShouldSpawnOnSelec;
     public static bool ShouldFollowRot;
     public static bool ShouldSpawnOnCamera;
@@ -58,39 +61,41 @@ public class ObjectManager_Patch
         }
         else
         {
-            EditorManager.inst.DisplayNotification("Selected Object Invalid\n[remember to expand a prefab if you're selecting it]", 5, EditorManager.NotificationType.Error);
+            return;
+            EditorManager.inst.DisplayNotification(
+                "Selected Object Invalid\n[remember to expand a prefab if you're selecting it]", 5,
+                EditorManager.NotificationType.Error);
         }
-        
+
         QuickSpawn = false;
     }
 
 }
 
 [HarmonyPatch(typeof(PrefabQuickSpawner))]
-public class PrefabQuickSpawner_Patch
+public class PrefabQuickSpawnerPatch
 {
     [HarmonyPatch(nameof(PrefabQuickSpawner.CheckForPrefabSpawn))]
     [HarmonyPrefix]
-    static void PostSetup(int _i)
+    static void PostSetup()
     {
         //this runs when you quick spawn a prefab.
-        if (ObjectManager_Patch.ShouldSpawnOnSelec)
+        if (ObjectManagerPatch.ShouldSpawnOnSelec)
         {
-            ObjectManager_Patch.QuickSpawn = true;
+            ObjectManagerPatch.QuickSpawn = true;
         }
     }
 
 }
 
 [HarmonyPatch(typeof(EditorManager))]
-public class QS_Editor_Patch
+public class QsEditorPatch
 {
     [HarmonyPatch(nameof(EditorManager.Start))]
     [HarmonyPostfix]
     static void PostSetup(ref EditorManager __instance)
     {
         var settings = __instance.transform.parent.Find("Editor GUI/sizer/EditorDialogs/QuickSpawnDialog/Scroll View/Viewport/Content/settings");
-        
         
         //GameObjects]
         var content = settings.Find("1/content-wrapper/content");
@@ -105,7 +110,7 @@ public class QS_Editor_Patch
         //the Spawn toggle
         var activeObj = Object.Instantiate(active, settings);
         activeObj.GetComponent<Toggle>().Set(false);
-        activeObj.GetComponent<Toggle>().onValueChanged.AddListener(new Action<bool>(x => {ObjectManager_Patch.ShouldSpawnOnSelec = x;}));
+        activeObj.GetComponent<Toggle>().onValueChanged.AddListener(new Action<bool>(x => {ObjectManagerPatch.ShouldSpawnOnSelec = x;}));
         activeObj.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = "Spawn";
         
         //setting up the tooltip
@@ -119,7 +124,7 @@ public class QS_Editor_Patch
         //the Rotate toggle
         activeObj = Object.Instantiate(active, settings);
         activeObj.GetComponent<Toggle>().Set(false);
-        activeObj.GetComponent<Toggle>().onValueChanged.AddListener(new Action<bool>(x => {ObjectManager_Patch.ShouldFollowRot = x;}));
+        activeObj.GetComponent<Toggle>().onValueChanged.AddListener(new Action<bool>(x => {ObjectManagerPatch.ShouldFollowRot = x;}));
         activeObj.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = "Rotate";
 
         //setting up the tooltip
@@ -132,7 +137,7 @@ public class QS_Editor_Patch
         //the Spawn on Camera toggle
         activeObj = Object.Instantiate(active, settings);
         activeObj.GetComponent<Toggle>().Set(false);
-        activeObj.GetComponent<Toggle>().onValueChanged.AddListener(new Action<bool>(x => {ObjectManager_Patch.ShouldSpawnOnCamera = x;}));
+        activeObj.GetComponent<Toggle>().onValueChanged.AddListener(new Action<bool>(x => {ObjectManagerPatch.ShouldSpawnOnCamera = x;}));
         activeObj.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = "Camera";
 
         //setting up the tooltip
@@ -141,8 +146,5 @@ public class QS_Editor_Patch
         tooltip.title = "Spawn on Camera";
         tooltip.description = "if an quick spawned prefab should spawn on the center of the camera";
         activeObj.SetSiblingIndex(4);
-
-        
-        
     }
 }
