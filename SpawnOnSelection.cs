@@ -1,11 +1,8 @@
 using System;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
-using Il2CppSystem.Threading.Tasks;
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
-using VGFunctions;
 using Object = UnityEngine.Object;
 
 namespace PrefabOnAbsolutePos;
@@ -13,12 +10,13 @@ namespace PrefabOnAbsolutePos;
 [HarmonyPatch(typeof(ObjectManager))]
 public class ObjectManagerPatch
 {
-    public static bool QuickSpawn = false;
+    public static bool QuickSpawn;
     public static bool ShouldSpawnOnSelec;
-    public static bool ShouldFollowRot;
     public static bool ShouldSpawnOnCamera;
+    public static bool ShouldFollowRot;
+    private static readonly string ErrorMessage = "Selected Object Invalid\n[remember to expand a prefab if you're selecting it]";
     
-    
+
     [HarmonyPatch(nameof(ObjectManager.HandlePrefabOffsetKeyframes))]
     [HarmonyPrefix]
     static void PostSetup(ref ObjectManager __instance, int _i)
@@ -49,6 +47,7 @@ public class ObjectManagerPatch
             {
                 obj.GetEvent(2).SetVal(0,  EventManager.inst.camRot); //rot
             }
+            QuickSpawn = false;
             return;
         }
         
@@ -68,10 +67,10 @@ public class ObjectManagerPatch
         }
         else
         {
-            return;
-            EditorManager.inst.DisplayNotification(
-                "Selected Object Invalid\n[remember to expand a prefab if you're selecting it]", 5,
-                EditorManager.NotificationType.Error);
+            if (!EditorManager.inst.liveNotifTracking.ContainsKey(ErrorMessage))
+            {
+                EditorManager.inst.DisplayNotificationLoop(ErrorMessage, 3, EditorManager.NotificationType.Error);
+            }
         }
 
         QuickSpawn = false;
@@ -102,6 +101,11 @@ public class QsEditorPatch
     [HarmonyPostfix]
     static void PostSetup(ref EditorManager __instance)
     {
+        ObjectManagerPatch.QuickSpawn = false;
+        ObjectManagerPatch.ShouldSpawnOnCamera = false;
+        ObjectManagerPatch.ShouldFollowRot = false;
+        ObjectManagerPatch.ShouldSpawnOnSelec = false;
+        
         var settings = __instance.transform.parent.Find("Editor GUI/sizer/EditorDialogs/QuickSpawnDialog/Scroll View/Viewport/Content/settings");
         
         //GameObjects]
