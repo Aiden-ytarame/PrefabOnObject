@@ -44,6 +44,11 @@ public class ObjectManagerPatch
         {
             obj.GetEvent().SetVal(0, EventManager.inst.CamPos.x); //pos x
             obj.GetEvent().SetVal(1, EventManager.inst.CamPos.y); //pos y
+
+            if (ShouldFollowRot)
+            {
+                obj.GetEvent(2).SetVal(0,  EventManager.inst.camRot); //rot
+            }
             return;
         }
         
@@ -55,9 +60,11 @@ public class ObjectManagerPatch
             
             obj.GetEvent().SetVal(0, goRef.VisualObject.position.x); //pos x
             obj.GetEvent().SetVal(1, goRef.VisualObject.position.y); //pos y
-            
-            if(ShouldFollowRot)
+
+            if (ShouldFollowRot)
+            {
                 obj.GetEvent(2).SetVal(0, goRef.VisualObject.rotation.eulerAngles.z); //rot
+            }
         }
         else
         {
