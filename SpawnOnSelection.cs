@@ -25,13 +25,14 @@ public class ObjectManagerPatch
             return;
 
         string id = DataManager.inst.gameData.beatmapObjects[_i].prefabInstanceID;
-            
         //so this gets the PrefabObject from the BeatmapGameObject, im unsure if this is needed,
         //as BeatmapGameObject contains an event array but doesnt have the GetEvent() function
+        
         var obj = DataManager.inst.gameData.prefabObjects.Find(
             DelegateSupport.ConvertDelegate<Il2CppSystem.Predicate<DataManager.GameData.PrefabObject>>
                 (new Predicate<DataManager.GameData.PrefabObject>(x => x.ID == id)));
-
+        
+        
         if (obj == null)
         {
             QuickSpawn = false;
@@ -59,7 +60,7 @@ public class ObjectManagerPatch
             
             obj.GetEvent().SetVal(0, goRef.VisualObject.position.x); //pos x
             obj.GetEvent().SetVal(1, goRef.VisualObject.position.y); //pos y
-
+            
             if (ShouldFollowRot)
             {
                 obj.GetEvent(2).SetVal(0, goRef.VisualObject.rotation.eulerAngles.z); //rot
@@ -122,7 +123,7 @@ public class QsEditorPatch
         var activeObj = Object.Instantiate(active, settings);
         activeObj.GetComponent<Toggle>().Set(false);
         activeObj.GetComponent<Toggle>().onValueChanged.AddListener(new Action<bool>(x => {ObjectManagerPatch.ShouldSpawnOnSelec = x;}));
-        activeObj.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = "Spawn";
+        activeObj.Find("content/text").GetComponent<TextMeshProUGUI>().text = "Spawn";
         
         //setting up the tooltip
         var tooltip = activeObj.GetComponent<TooltipTrigger>();
@@ -136,7 +137,7 @@ public class QsEditorPatch
         activeObj = Object.Instantiate(active, settings);
         activeObj.GetComponent<Toggle>().Set(false);
         activeObj.GetComponent<Toggle>().onValueChanged.AddListener(new Action<bool>(x => {ObjectManagerPatch.ShouldFollowRot = x;}));
-        activeObj.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = "Rotate";
+        activeObj.Find("content/text").GetComponent<TextMeshProUGUI>().text = "Rotate";
 
         //setting up the tooltip
         tooltip = activeObj.GetComponent<TooltipTrigger>();
@@ -149,7 +150,7 @@ public class QsEditorPatch
         activeObj = Object.Instantiate(active, settings);
         activeObj.GetComponent<Toggle>().Set(false);
         activeObj.GetComponent<Toggle>().onValueChanged.AddListener(new Action<bool>(x => {ObjectManagerPatch.ShouldSpawnOnCamera = x;}));
-        activeObj.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = "Camera";
+        activeObj.Find("content/text").GetComponent<TextMeshProUGUI>().text = "Camera";
 
         //setting up the tooltip
         tooltip = activeObj.GetComponent<TooltipTrigger>();
