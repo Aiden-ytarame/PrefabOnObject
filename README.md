@@ -8,7 +8,7 @@
 > The first time you open the game after every game update, it'll take a while to open.
 
 * Close the game and download the [PrefabOnAbsolutePos.dll](https://github.com/Aiden-ytarame/PrefabOnObject/releases/latest/download/PrefabOnAbsolutePos.dll) from latest release of the Multiplayer mod.
-* In your game's folder there will be a new folder called "bepinex". Extract PAM.zip inside the generated **/bepinex/plugins/** folder.
+* In your game's folder there will be a new folder called "bepinex". Put the **PrefabOnAbsolutePos.dll** inside the generated **/bepinex/plugins/** folder.
 * Open the game and enjoy!
 
 
