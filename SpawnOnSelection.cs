@@ -83,13 +83,6 @@ public class ObjectManagerPatch
 
         QuickSpawn = false;
     }
-
-    [HarmonyPatch(nameof(ObjectManager.Awake))]
-    [HarmonyPostfix]
-    static void PostAwake()
-    {
-        
-    }
 }
 
 [HarmonyPatch(typeof(PrefabQuickSpawner))]
@@ -235,16 +228,4 @@ public class QsEditorPatch
         
         activeObj.SetSiblingIndex(5);
     }
-}
-
-[HarmonyPatch(typeof(CompLib))]
-public static class test
-{
-    [HarmonyPatch(nameof(CompLib.InitInputFieldFloat))]
-    [HarmonyPrefix]
-    static void preInit(Transform _parent, CompLib.InputFieldStyle _type = CompLib.InputFieldStyle.Default)
-    {
-        
-    }
-   
 }
