@@ -13,6 +13,7 @@
       https://nuget.samboy.dev/v3/index.json;
     </RestoreAdditionalProjectSources>
     <RootNamespace>PrefabOnAbsolutePos</RootNamespace>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,4 +39,8 @@
       <HintPath>lib\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
+	
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="xcopy /q /Y &quot;D:\Downloads\UnityPorted\MODS\PAGit\PrefabOnObject\bin\Debug\net6.0\PrefabOnAbsolutePos.dll&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Project Arrhythmia\BepInEx\plugins\Editor&quot; &gt; nul" />
+    </Target>
 </Project>

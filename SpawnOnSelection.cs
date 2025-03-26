@@ -121,7 +121,7 @@ public class QsEditorPatch
             __instance.transform.parent.Find(
                 "Editor GUI/sizer/EditorDialogs/QuickSpawnDialog/Scroll View/Viewport/Content/settings");
         var offset = __instance.transform.parent.Find(
-            "Editor GUI/sizer/EditorDialogs/GameObjectDialog/data/left/Scroll View/Viewport/Content/parent_more");
+            "Editor GUI/sizer/EditorDialogs/GameObjectDialog/data/left/Scroll View/Viewport/Content/parent/parent_more");
 
         var position =
             __instance.transform.parent.Find(
@@ -187,7 +187,9 @@ public class QsEditorPatch
         
         //spawn the parent offset tab
         activeObj = Object.Instantiate(offset, settings);
-        activeObj.Find("bold-text").GetComponent<TextMeshProUGUI>().text = "Spawn Offset";
+        activeObj.Find("pos_label").GetComponent<TextMeshProUGUI>().text = "Spawn Offset";
+        activeObj.Find("sca_label")?.gameObject.SetActive(false);
+        activeObj.Find("rot_label")?.gameObject.SetActive(false);
         
         Object.Destroy(activeObj.Find("pos_row").gameObject);
         Object.Destroy(activeObj.Find("sca_row").gameObject);
@@ -216,10 +218,8 @@ public class QsEditorPatch
         rotLabel.GetComponentInChildren<TextMeshProUGUI>().text = "Rotation";
 
         Transform rotRow = activeObj.Find("rot_row");
-        rotRow.GetChild(0).gameObject.SetActive(false);
-        rotRow.GetChild(1).gameObject.SetActive(false);
         
-        CompLib.InitInputFieldFloat(rotRow.GetChild(2),
+        CompLib.InitInputFieldFloat(rotRow.GetChild(0),
             _getFunc: new Func<float>(() => ObjectManagerPatch.Zoffset),
             _setFunc:new Action<float>(x => { ObjectManagerPatch.Zoffset = x; }),
             _refreshUINeeded:new Func<bool>(() => true),
